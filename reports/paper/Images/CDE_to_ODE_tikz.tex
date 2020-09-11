@@ -1,0 +1,60 @@
+\begin{tikzpicture}
+    \begin{scope}[every node/.style={rectangle, thick, draw, rounded corners=0.1cm}]
+        \node (A) at (0,0) {Predictions};
+        \node (B) at (-3,6) {CDE};
+        \node (C) at (3, 6) {ODE};
+    \end{scope}
+
+    \begin{scope}[
+    >={Stealth},
+    every node/.style={fill=white, rectangle},
+    ]
+        % Uncurved arrows
+        \draw[->, blue!80!black, thick] (B) -- (C) node [midway, sloped] (TextNode) {Log-ODE Method};
+        \draw[->, blue!80!black, thick] (C) -- (A) node [midway, sloped] (TextNode) {Neural ODEs};
+        \draw[->, blue!80!black, dashed, thick] (B) -- (A) node [midway, sloped] (TextNode) {Neural CDEs};
+    
+        % Log-ODE
+        \draw[
+            {Stealth}-,
+            green!80!black,
+            thick,
+            postaction={
+                decorate, 
+                decoration={
+                    raise=0.5ex, text along path, text align=center, 
+                    text={Log-Signature Factor}
+                    }
+                }
+            ] (B) to[bend left=45] (C);
+        % ODE Adjoint
+        \draw[
+            ->,
+            green!80!black,
+            thick,
+            postaction={
+                decorate, 
+                decoration={
+                    raise=0.5ex, text along path, text align=center, 
+                    text={ODE Adjoint Method}
+                    }
+                }
+            ] (A) to[bend right=45] (C);
+        % CDE Adjoint
+            \draw[
+                <-,
+                thick,
+                green!80!black,
+                dashed,
+                postaction={
+                    decorate, 
+                    decoration={
+                        raise=0.5ex, text along path, text align=center, 
+                        text={CDE Adjoint Method}
+                        }
+                    }
+                ] (B) to[bend right=45] (A);
+                
+                
+    \end{scope}
+\end{tikzpicture}

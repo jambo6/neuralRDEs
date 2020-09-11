@@ -1,0 +1,41 @@
+\begin{table}[t]
+    \begin{center}
+        \begin{tabular}{ccccccc}
+        \toprule
+        \multicolumn{3}{c}{\textbf{Validation loss}} & \multirow{2}{*}{\textbf{Hidden dim}} & \multirow{2}{*}{\textbf{Num layers}} & \multirow{2}{*}{\textbf{Hidden hidden multiplier}} & \multirow{2}{*}{\textbf{Total params}} \\
+        \cmidrule(lr){1-3}
+        RR & HR & SpO2 & & & & \\
+        \midrule
+        1.72 &      6.10 &      2.07 &         16 &                        2 &          1 &        2209 \\
+        1.57 &      5.58 &      1.97 &         16 &                        2 &          2 &        3265 \\
+        1.55 &      6.10 &      1.33 &         16 &                        2 &          3 &        3265 \\
+        1.80 &      5.16 &      2.05 &         16 &                        3 &          1 &        3249 \\
+        1.61 &      5.22 &      1.62 &         16 &                        3 &          2 &        5601 \\
+        1.56 &      3.34 &      1.18 &         16 &                        3 &          3 &        5601 \\
+        1.57 &      3.86 &      1.97 &         16 &                        4 &          1 &        4289 \\
+        1.45 &      3.54 &      1.25 &         16 &                        4 &          2 &        8449 \\
+        1.54 &      3.93 &      1.09 &         16 &                        4 &          3 &        8449 \\
+        1.56 &      6.81 &      1.87 &         32 &                        2 &          1 &        8513 \\
+        1.42 &      3.11 &      1.43 &         32 &                        2 &          2 &       12673 \\
+        1.54 &      3.60 &      1.11 &         32 &                        2 &          3 &       12673 \\
+        1.54 &      3.52 &      1.57 &         32 &                        3 &          1 &       12641 \\
+        1.39 &      2.96 &      1.03 &         32 &                        3 &          2 &       21953 \\
+        1.47 &      2.95 &      1.05 &         32 &                        3 &          3 &       21953 \\
+        1.55 &      3.00 &      2.00 &         32 &                        4 &          1 &       16769 \\
+        1.38 &      3.20 &      1.07 &         32 &                        4 &          2 &       33281 \\
+        1.43 &      2.58 &      1.01 &         32 &                        4 &          3 &       33281 \\
+        1.51 &      3.21 &      1.10 &         64 &                        2 &          1 &       33409 \\
+        1.43 &     \textbf{ 2.22} & 1.00 &         \textbf{64} &                        \textbf{2} &          \textbf{2} &       \textbf{49921} \\
+        1.51 &      3.34 &      0.94 &         64 &                        2 &          3 &       49921 \\
+        1.55 &      3.24 &      2.09 &         64 &                        3 &          1 &       49857 \\
+        1.32 &      2.53 &      0.88 &         64 &                        3 &          2 &       86913 \\
+        \textbf{1.25} &      2.57 &      \textbf{0.73} &         \textbf{64} &                        \textbf{3} &         \textbf{3} &       \textbf{86913} \\
+        1.43 &      5.78 &      1.43 &         64 &                        4 &          1 &       66305 \\
+        1.28 &      2.26 &      0.93 &         64 &                        4 &          2 &      132097 \\
+        1.32 &      2.46 &      1.15 &         64 &                        4 &          3 &      132097 \\
+        \bottomrule
+        \end{tabular}
+    \end{center}
+    \caption{Hyperparameter selection results for each problem of the BIDMC dataset. The bold values denote the selected hyperparameters for each vitals sign problem. Note that RR and SpO2 had the same parameters selected, hence why only two lines are given in bold.}
+    \label{tab:bidmc_hyper}
+\end{table}

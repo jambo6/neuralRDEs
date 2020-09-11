@@ -1,0 +1,39 @@
+\section{Experimental details} \label{apx:experiments}
+
+\paragraph{Code} The code to reproduce the experiments is available at \url{https://github.com/jambo6/neural_rdes}. 
+
+\paragraph{Data splits} Each dataset was split into a training, validation, and testing dataset with relative sizes 0.70/0.15/0.15. 
+
+\paragraph{Normalisation} The training splits of each dataset were normalised to zero mean and unit variance using a standard scaling approach. The parameters from the training set were then used to normalise the validation and testing datasets. 
+
+\paragraph{Architecture} We give graphical description of the architecture used for updating the Neural CDE hidden state in figure \ref{fig:network_diagram}.
+
+\begin{figure}
+    \centering
+    \input{Images/network_diagram}
+    \caption{Overview of the hidden state update network structure. We give the dimensions at each layer in the top right hand corner of each box.} 
+    \label{fig:network_diagram}
+\end{figure}
+
+
+\paragraph{Activation functions} As seen in figure \ref{fig:network_diagram}, the final activation function before the ODE solve was the Tanh nonlinearity, with all other nonlinearities being ReLU. Tanh was used to bound the output of the nonlinear hidden layer as we found that otherwise we developed stability problems. 
+
+\paragraph{ODE Solver} All problems used the `rk4' solver implemented in torchdiffeq. 
+
+\paragraph{Computing infrastructure} All EigenWorms experiments were run on a computer equipped with three GeForce RTX 2080 Ti's. All BIDMC experiments were run on a computed with two GeForce RTX 2080 Ti's and two Quadro GP100's.
+
+\paragraph{Optimiser} All experiments used the Adam optimiser. The learning rate was initialised at $0.01 * 32$ divided by batch size. The batch size used was 1024 for EigenWorms and 512 for the BIDMC problems. If the validation loss failed to decrease after 15 epochs the learning rate was reduced by a factor of 10. If the validation loss did not decrease after 60 epochs, training was terminated and the model was rolled back to the point at which it achieved the lowest loss on the validation set. 
+
+\paragraph{Hyperparameter selection} Hyperparameters were selected to optimise the score of the NCDE$_1$ model on the validation set. For each dataset the search was performed with a step size that meant the total number of hidden state updates was equal to 500, as this represented a good balance between length and speed that allowed us to complete the search in a reasonable time-frame. In particular, this was short enough that we could train using the non-adjoint training method which helped to speed this section up. The hyperparameters that were considered were:
+\begin{itemize}
+    \item Hidden dimension: [16, 32, 64] - The dimension of the hidden state $Z_t$.
+    \item Number of layers: [2, 3, 4] - The number of hidden state layers.
+    \item Hidden hidden multiplier: [1, 2, 3] - Multiplication factor for the hidden hidden state, this being the `Hidden layer $k$' in figure \ref{fig:network_diagram}. The dimension of each of these `hidden hidden' layers with be this value multiplied by `hidden dim'.
+\end{itemize}
+We ran each of these 27 total combinations for every dataset and the parameters that corresponded were used as the parameters when training over the full depth and step grid. The full results from the hyperparameter search are listed in tables (\ref{tab:eigenworms_hyper}, \ref{tab:bidmc_hyper}) with bolded values to show which values were eventually selected. 
+
+
+\input{Tables/eigenworms_hyperparameters}
+
+\input{Tables/bidmc_hyperparameters}
+

@@ -1,0 +1,154 @@
+% Before proceeding, we refer the reader to figure (\ref{fig:ncde_plots}) which may aid to give a stronger intuition of the proposed method. On the left, we illustrate the original NCDE method that updates the hidden state each time a new piece of data arrives leading to a large number of training steps. On the right, we draw the same for the log-ODE method where we have the additional step of conversion onto the log-signatures over intervals. This means that in training we only perform updates to the hidden state once for each log-signature block.
+
+\begin{figure*}[!hbtp]
+    \begin{subfigure}[t]{.5\linewidth}
+        \centering
+            \resizebox{\linewidth}{!}{
+                \ncdediagram{0}
+            }
+    \end{subfigure}%
+    \begin{subfigure}[t]{.5\linewidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \ncdediagram{1}
+        }
+    \end{subfigure}
+    \caption{\textbf{Left:} The original Neural CDE formulation. The path $X_t$ is quickly varying, meaning a lot of integration steps are needed to resolve it. \textbf{Right:} The log-ODE method. The logsignature path is more slowly varying (in a higher dimensional space), and needs fewer integration steps to resolve.}
+    \label{fig:ncde_plots}
+\end{figure*}
+
+\section{Theory}
+Here we discuss the motivating theory. Readers more interested in the practical application of the method, and not necessarily the theoretical motivations, may wish to skip to the next section. See Figure \ref{fig:ncde_plots} for the essential idea.
+
+\subsection{Signatures and Logsignatures}
+We begin with an overview of the signature and logsignature transforms.
+
+\paragraph{Signature transform} Consider a path $X = (X^1, \ldots, X^v) \colon [a, b] \rightarrow \mathbb{R}^v$. We define its \emph{signature transform} as the infinite collection of statistics
+\begin{equation} 
+    S_{a, b}(X) = \Big(\big\{S_{a, b}^{\m i_1}(X)\big\}_{1\leq i_1\leq v}\, , \big\{S_{a, b}^{\m i_1, i_2}(X)\big\}_{1\leq i_1,i_2\leq v}\, , \big\{S_{a, b}^{\m i_1, i_2, i_3}(X)\big\}_{1\leq i_1,i_2,i_3\leq v}\, , \ldots\Big),
+    \label{eq:path_signature}
+\end{equation}
+where each term is a $n$-fold iterated integral of $\mathbf{x}$ with multi-index $i_1,...,i_d$:
+\begin{equation}
+    S_{a, b}^{\m i_1,...,i_d}(X) := \int_a^b\int_a^{t_{d-1}}\cdots\int_a^{t_2} \dby X_{t_1}^{i_1}\cdots \dby X_{t_d}^{i_d}.
+    \label{eq:sig_moments}
+\end{equation}
+This produces a graded sequence of statistics associated with a path. \citet{hambly2010sigunique} show that these statistics in fact characterise the path up ``tree-like equivalence''.
+
+% This is analogous to the scaled moment map
+% \begin{equation*}
+%     x \mapsto (\int_0^x \dby y, \int_0^x \int_0^y \dby z \dby y, \int_0^x \int_0^y \int_0^z \dby w \dby z \dby y, \ldots) = (x, \frac{1}{2!} x^2, \frac{1}{3!} x^3, \ldots)
+% \end{equation*}
+% for $x \in \reals$. For example this analogy may be followed through to define a signature kernel on path space \citep{toth2019sig}.
+
+As $S$ is an infinite sequence of values, we also define the \emph{depth-N signature transform} as
+\begin{equation} 
+    S^N_{a, b}(X) = \Big(\big\{S_{a,b}^{\m i_1}(X)\big\}_{1\leq i_1\leq v}\,,\ldots, \big\{S_{a,b}^{\m i_1, \ldots,i_N}(X)\big\}_{1\leq i_1,\ldots,i_N\leq v}\,\Big).
+    \label{eq:truncated_path_signature}
+\end{equation}
+
+See \citet{roughpath2007notes} or \citet[Appendix A]{bonnier2019sig}.
+
+\paragraph{Logsignature transform} However, the signature transform has some redundancy: a little algebra shows that for example $S^{1, 2}_{a, b}(X) + S^{2, 1}_{a, b}(X) = S^1_{a, b}(X) S^2_{a, b}(X)$, so that for instance we already know $S^{2, 1}_{a, b}(X)$, provided we know the other three quantities.
+
+The \emph{logsignature transform} formalises this by implementing a procedure involving throwing out all such redundant terms, and keeping only some minimal collection of terms. Such a minimal collection is nonunique, as we could have thrown out $S^{1, 2}_{a, b}(X)$ instead of $S^{2, 1}_{a, b}(X)$, for example.
+%It turns out that the logsignature exhibits a free Lie algebra structure, and different possible minimal collections correspond to different possible bases of the free Lie algebra. A standard choice is the Lyndon basis, which corresponds to embedding the signature in a tensor algebra, performing a logarithm in the tensor algebra,  keeping only those terms whose multi-index $i_1, \ldots, i_d$ is a Lyndon word, and then performing a particular sparse linear transformation.
+We are deliberately light on the (rather involved) details - see Appendix \ref{apx:logode}, and \citet{reizenstein2017logsig, reizenstein2018iisignature}.
+
+Starting from the depth-N signature transform and performing this procedure produces the \emph{depth-N logsignature transform}.\footnote{Note that similar terminology such as ``step-N logsignature'' is also used in the literature.} We denote this $\logsig^N_{a, b}$, which is a map from H{\"o}lder continuous paths $[a, b] \to \reals^v$ into $\reals^{\beta(v, N)}$, where
+\begin{equation*}
+    \beta(d, N) = \sum_{k = 1}^N \frac{1}{k} \sum_{i | k} \mu\left(\frac{k}{i}\right) d^i
+\end{equation*}
+with $\mu$ the M{\"o}bius function.
+
+\subsection{The Log-ODE Method}
+Recall the CDE of equation (\ref{eq:kidger_cde}), that is: $
+    Z_a = \xi$, and $Z_t = Z_a + \int^{t}_{a} f(Z_s) \dby X_s$ for $t \in (a, b].$
+
+Let $N \in \naturals$ be a fixed depth. Decompose $f \colon \reals^w \to \reals^{w \times v}$ into vector fields $f_i \colon \reals^w \to \reals^w$ for $i \in \{1, \ldots, v\}$, and then let $\widehat{f} = ({f_i}_{1 \leq i \leq v}, {[f_i, f_j]}_{1 \leq i < j \leq d}, \ldots)$ be the collection of all (nested up depth $N$) Lie brackets whose foliage\footnote{The map produced by ``ignoring the Lie brackets", for example $[f_1, [[f_2, f_1], f_3]] \mapsto (1,2,1,3)$.} is a Lyndon word, so that overall $\widehat{f} \colon \reals^w \to \reals^{w \times \beta(d, N)}$.
+
+Recall for $X \colon [a, b] \to \reals^v$ that $\logsig^N_{a, b}(X) \in \reals^{\beta(d, N)}$. Then the log-ODE method states
+\begin{equation}
+    Z_b \approx \widehat{Z}_b \quad \text{where} \quad \widehat{Z}_u = \widehat{Z}_a + \int^{u}_{a} \widehat{f}(\widehat{Z}_s) \logsig^N_{a, b}(X)\dby s, \quad \text{and} \quad  \widehat{Z}_{a} = Z_{a}.
+    \label{eq:log-ode}
+\end{equation}
+The approximation becomes arbitrarily good\footnote{With respect to any norm as $Z_b, \widehat{Z}_1$ exist in finite dimensions.} as $N \to \infty$.
+
+That is, the solution of the CDE may be approximated by the solution to an ODE. In practice, we go further and pick some points $r_i$ such that $a = r_0 < r_1 < \cdots < r_m = b$. We split up the CDE of equation (\ref{eq:kidger_cde}) into an integral over $[r_0, r_1]$, an integral over $[r_1, r_2]$, and so on, and apply the log-ODE method to each interval separately.
+
+See \citet{janssen2012thesis, lyons2014streams} for other overviews of the log-ODE method. Further information on its theoretical properties and convergence guarantees can be found in \citet{logode2014estimate}. See \citet{gyurko2008logode, flint2015logode, foster2020poly} for applications of the log-ODE method to stochastic differential equations (SDEs).
+
+The log-ODE method is a generalisation of the Magnus expansion for linear differential equations (see \citet{magnus2008expansion}). There, the control path is obtained by integrating the time-varying vector field and the log-ODE solve reduces to exponentiating a matrix.
+
+\subsection{Neural CDEs via the log-ODE method}
+
+We apply two relaxations to make the log-ODE scheme more practical.
+
+\paragraph{Lie bracket structure} First, we do not attempt to compute the Lie bracket structure of $\widehat{f}$. Whilst in principle this is possible (even straightforward with autodifferentiation), it is quite computationally expensive. Instead, a cheaper approach is to model $\widehat{f}$ as a neural network directly. This need \emph{not} necessarily exhibit a Lie bracket structure, but as neural networks are universal approximators \citep{pinkus, deepandnarrow} then this approach is at least as general from a modelling perspective.
+
+\paragraph{Hyperparameters} Second, we do not attempt to take $r_{i+1} - r_{i}$ small enough or $N$ large enough such that the error compared to the original Neural CDE is made small. Instead we treat these as hyperparameters, and regard the use of the log-ODE method as a modelling choice rather than an implementation detail. This still produces good results, whilst being cheaper to compute.
+
+\paragraph{Overall} Recall how the Neural CDE formulation of equation (\ref{eq:kidger_ncde}) was solved via equations (\ref{eq:kidger_g_X}), (\ref{eq:kidger_cde_evaluation}).
+
+Our method is thus to replace equations (\ref{eq:kidger_g_X}), (\ref{eq:kidger_cde_evaluation}) with
+\begin{equation}
+    Z_t = Z_{t_0} + \int^{t}_{t_0} \widehat{g}_{\theta, X}(Z_s, s) \dby s,
+\end{equation}
+where
+\begin{equation*}
+    \widehat{g}_{\theta, X}(Z, s) = \widehat{f}_\theta(Z) \logsig_{r_i, r_{i+1}}^N(X) \quad \text{for } s \in [r_i, r_{i + 1}),
+\end{equation*}
+is piecewise in $s$, and $\widehat{f}_\theta \colon \reals^w \to \reals^{w \times \beta(v, N)}$ is an arbitrary neural network.
+
+Importantly, for implementation purposes: this is actually the same formulation as equation (\ref{eq:kidger_g_X}), with the driving path taken to be piecewise linear in logsignature space. (So that its derivative is piecewise constant.) This is what allows us to make the relatively simple presentation in the next section.
+
+As this formulation is now detached from the original sampling rate of the data, and instead uses the much coarser sampling points $r_i$, then we may expect to use larger integration steps. The information introduced in $\logsig_{r_i, r_{i+1}}^N(X)$ for $N>1$ are higher-order correction terms that compensate for the larger steps.
+
+\section{Computation}
+We move on to discussing how the method may be implemented, which is straightforward with existing tools. See Figure \ref{fig:ncde_plots} for the essential idea.
+
+\subsection{Method}
+\paragraph{Data} Recall that we observe some time series $\mathbf{x} = ((t_0, x_0), (t_1, x_1), ..., (t_n, x_n))$, and have constructed a piecewise linear interpolation $X \colon [t_0, t_n] \to \mathbb{R}^{v}$ such that $X_{t_i} = (t_i, x_i)$.
+
+We pick some points $r_i$ such that $t_0 = r_0 < r_1 < \cdots < r_m = t_n$. In principle these can be variably spaced but in practice we will typically space them equally far apart. The total number of points $m$ should be much smaller than $n$.
+
+\paragraph{Logsignature transform} The depth-N logsignature transform, denoted $\logsig^N_{a, b}$, is a map from continuous paths $[a, b] \to \reals^v$ into $\reals^{\beta(v, N)}$. See the previous section for a discussion on the precise nature of the logsignature transform and an equation for $\beta$.
+
+We apply the logsignature transform to $X$ on each $[r_i, r_{i+1}]$ for all $i$. This produces a sequence $(L_1, \ldots, L_{m})$ such that
+\begin{equation*}
+    L_i = \logsig^N_{r_{i-1}, r_{i}}(X) \in \reals^{\beta(v, N)}.
+\end{equation*}
+
+Additionally, let $L_{0}$ be the logsignature of the straight-line path from zero to $x_0$. (Equivalently: just define $L_i$ as above given the input time series $((t_0 - 1, 0), (t_0, x_0), (t_1, x_1), ..., (t_n, x_n))$.)
+
+There are standard libraries available which make computing the logsignature transform easy. We use Signatory \citep{signatory}, which is PyTorch-compatible \citep{pytorch}. Note that efficient algorithms are only known for computing the logsignature of a piecewise linear path; this is what motivates the use of piecewise linear interpolation to construct $X$.
+
+\paragraph{Neural CDEs} Finally, we consider the input time series
+\begin{equation}
+    ((r_0, L_0), (r_1, L_0 + L_1), \ldots, (r_{m - 1}, \sum_{j = 0}^{m - 1} L_j), (r_m, \sum_{j = 0}^{m} L_j))
+    \label{eq:logsig_time_series}
+\end{equation}
+and perform the usual Neural CDE procedure. That is, interpolate this data, use it to drive a CDE, and so on. (With one small change: when constructing an interpolation $L$ of this data, we don't need to include time, as that was already done when constructing $X$. Thus the interpolated path is $L \colon [t_0, t_n] \to \reals^{\beta(v, N)}$ with $L(r_i) = \sum_{j = 0}^i L_j$.)
+
+\subsection{Discussion}
+\paragraph{Binning} Essentially all we have done is bin our data, with a carefully chosen bin statistic, given by the logsignature transform. The intuition is that the logsignature transform is a map that extracts the information most relevant for understanding how a path can drive a CDE.
+
+\paragraph{Variation speed} The sequence of logsignatures is now of length $m$, which was chosen to be much smaller than $n$. As such, it is much more slowly varying over the interval $[t_0, t_n]$ than the original data, which was of length $n$. The differential equation it drives is better behaved, and so larger integration steps may be used in the numerical solver. This is the source of the speed-ups of this method; we observe typical speed-ups by a factor of about 100.
+
+\paragraph{Length/channel trade-off} The length of the input sequence has been reduced from $n$ to $m$, whilst the dimension of the sequence has been increased from $v$ to $\beta(v, N) > v$.
+
+\paragraph{Ease of implementation} The method is straightforward to implement in code: the logsignature transforms may be applied as a data preprocessing step using readily-available libraries.
+
+\paragraph{Memory efficiency} One of the classic problems with long sequences is the need for large amounts of memory to perform backpropagation-through-time (BPTT). However, Neural CDEs support memory-efficient backpropagation via the adjoint equations, see \citet{kidger2020neural}. Whilst not strictly a benefit of the log-ODE scheme, for completeness we note that this is an additional reason for Neural CDEs to be an attractive choice for long time series.
+
+\subsection{The depth and step hyperparameters} \label{subsec:tradeoff}
+This method introduces two new hyperparameters: depth $N$ and step size $r_{i+1} - r_i$ (which we typically take as the same for all $i$, for simplicity).
+
+Increasing step size will lead to faster (but less informative) training by reducing the number of operations in the forward pass. Increasing depth will lead to slower (but more informative) training, as more information about each local interval is used in each update.
+
+If depth $N=1$ and steps $r_i = t_i$ are used, then in fact the time series of equation (\ref{eq:logsig_time_series}) is identical to the input time series. Thus the log-ODE method generalises the usual approach.
+
+% TODO: it would be nice to include this
+
+% \subsection{Batching and Computational Complexity}
+% In \citet{rubanova2019latent} the authors note that solving ODE equations requires the observation times to be the same in each mini-batch. If the data is irregularly sampled then this will in general not be the case and so the data will need to be interpolated onto the union of all time points in the batch before the ODE can be solved. This is not an issue when solving equation (\ref{eq:log-ode_update}) because each differential equation is only ever solved from $u=0$ to $u=1$ with the true time interval being absorbed into the log-signature term. For a mini-batch with irregular observation times, the hidden state can be updated for each time series without interpolation onto additional time points. This leads to a significantly faster forward pass that only needs to perform as many forward operations as the number of time points in the longest time series as opposed to the union of all time points. 

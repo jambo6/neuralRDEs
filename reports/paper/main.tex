@@ -1,0 +1,119 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{style/iclr2020_conference,times}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+\usepackage{url}
+
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{arydshln}
+\usepackage{amssymb}
+\setlength\dashlinegap{2.5pt}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{rotating}
+\usepackage{ifthen}
+\graphicspath{ {Images/} }
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{proof}[theorem]{Proof}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{method}[theorem]{Method}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{xca}[theorem]{Exercise}
+\newtheorem{remark}[theorem]{Remark}
+
+% This file contains lots of tikz stuff
+\input{Images/ncde_diagram_script}
+\usetikzlibrary{external}
+
+% Tikz network diagram
+\tikzset{middlearrow/.style={
+        decoration={markings,
+            mark= at position 0.5 with {\arrow{#1}} ,
+        },
+        postaction={decorate}
+    }
+}
+\tikzset{input/.style={black, draw=green!50, fill=green!50, rectangle, minimum height=0.8cm}}
+\tikzset{hidden/.style={black, draw=blue!50, fill=blue!50, rectangle, minimum height=0.8cm}}
+\tikzset{hidden_square/.style={black, draw=blue!50, fill=blue!50, rectangle, minimum height=3.5cm}}
+\tikzset{logsig/.style={black, draw=red!50, fill=red!50, rectangle, minimum height=0.8cm}}
+
+
+\title{Neural CDEs for Long Time Series via the Log-ODE Method}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the \iclrfinalcopy macro remains commented out below.
+% Non-anonymous submissions will be rejected without review.
+
+%\iclrfinalcopy
+
+\author{James Morrill \And Patrick Kidger \And Cristopher Salvi  \And James Foster \And Terry Lyons\AND\\[-20pt]
+Mathematical Institute, University of Oxford;\\
+The Alan Turing Institute, British Library\\[2pt]
+\texttt{\{morrill, kidger, salvi, foster, tlyons\}@maths.ox.ac.uk}
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+\newcommand{\logsig}{\mathrm{LogSig}}
+\newcommand{\dby}{\mathrm{d}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\naturals}{\mathbb{N}}
+\newcommand{\restr}[2]{{\left.\kern-\nulldelimiterspace #1 \right|_{#2}}}
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+Neural Controlled Differential Equations (Neural CDEs) are the continuous-time analogue of an RNN, just as Neural ODEs are analogous to ResNets. However just like RNNs, training Neural CDEs is difficult for long time series. Training takes impractically long, and models may fail to train. Here, we demonstrate that an existing numerical method for the solution of CDEs -- the log-ODE method -- may in the context of Neural CDEs be used to take integration steps \emph{larger} than the discretisation of the data, whilst depending upon sub-step data through additional terms. Doing so represents making a length/channel trade-off, and is easy to implement with existing tools. We demonstrate efficacy on problems of length up to 17k observations and observe training speed-ups from roughly days to roughly minutes.
+\end{abstract}
+
+
+\input{Sections/1_Introduction}
+
+\input{Sections/2_Methods}
+
+\input{Sections/3_Experiments}
+
+\input{Sections/4_Limitations}
+
+\input{Sections/5_RelatedWork}
+
+\input{Sections/6_Conclusions}
+
+
+\subsubsection*{Author Contributions}
+
+
+\subsubsection*{Acknowledgements}
+JM was supported by the EPSRC grant EP/L015803/1 in collaboration
+with Iterex Therapuetics. CS was supported by the
+EPSRC grant EP/R513295/1. PK was supported by the EPSRC grant EP/L015811/1. JF was supported by the EPSRC grant EP/N509711/1. JM, CS, PK, JF, TL were supported by the Alan Turing Institute under the EPSRC grant EP/N510129/1.
+
+
+\bibliography{bibliography}
+\bibliographystyle{style/iclr2020_conference}
+
+\newpage
+
+\input{Sections/Appendix/main}
+
+\end{document}

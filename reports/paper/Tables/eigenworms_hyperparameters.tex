@@ -1,0 +1,39 @@
+\begin{table}[t]
+    \begin{center}
+        \begin{tabular}{ccccc}
+        \toprule
+        \textbf{Validation accuracy} & \textbf{Hidden dim} & \textbf{Num layers} & \textbf{Hidden hidden multiplier} & \textbf{Total params} \\
+        \midrule
+        33.3 &         16 &                        2 &          3 &        5509 \\
+        43.6 &         16 &                        2 &          2 &        5509 \\
+        56.4 &         16 &                        2 &          1 &        4453 \\
+        64.1 &         16 &                        3 &          2 &        8869 \\
+        38.5 &         16 &                        3 &          3 &        8869 \\
+        51.3 &         16 &                        3 &          1 &        6517 \\
+        82.1 &         16 &                        4 &          2 &       12741 \\
+        35.9 &         16 &                        4 &          3 &       12741 \\
+        53.8 &         16 &                        4 &          1 &        8581 \\
+        35.9 &         32 &                        2 &          3 &       21253 \\
+        74.4 &         32 &                        2 &          2 &       21253 \\
+        43.6 &         32 &                        2 &          1 &       17093 \\
+        53.8 &         32 &                        3 &          3 &       34629 \\
+        \textbf{87.2} &         \textbf{32} & \textbf{3} & \textbf{2} & \textbf{34629} \\
+        64.1 &         32 &                        3 &          1 &       25317 \\
+        35.9 &         32 &                        4 &          3 &       50053 \\
+        71.8 &         32 &                        4 &          1 &       33541 \\
+        79.5 &         32 &                        4 &          2 &       50053 \\
+        41.0 &         64 &                        2 &          3 &       83461 \\
+        64.1 &         64 &                        2 &          2 &       83461 \\
+        48.7 &         64 &                        3 &          3 &      136837 \\
+        59.0 &         64 &                        3 &          2 &      136837 \\
+        51.3 &         64 &                        2 &          1 &       66949 \\
+        56.4 &         64 &                        4 &          2 &      198405 \\
+        64.1 &         64 &                        4 &          3 &      198405 \\
+        64.1 &         64 &                        3 &          1 &       99781 \\
+        51.3 &         64 &                        4 &          1 &      132613 \\
+        \bottomrule
+        \end{tabular}
+    \end{center}
+    \caption{Hyperparamter selection results for the EigenWorms dataset. The blue values denote the selected hyperparameters.}
+    \label{tab:eigenworms_hyper}
+\end{table}

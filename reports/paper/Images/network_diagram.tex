@@ -1,0 +1,38 @@
+\resizebox{\textwidth}{!}{%
+    
+    \begin{tikzpicture}
+        \node[input, rotate=90, minimum width=2.8cm] (input) at (0, 0) {Input, $Z_{r_i}$};
+        \node[hidden, rotate=90, minimum width=5cm] (hidden1) at (2,0) {Hidden layer 1};
+        \node[hidden, rotate=90, minimum width=5cm] (hidden_end) at (6,0) {Hidden layer n};
+        \node[hidden_square, minimum width=4cm] (hidden_square) at (10,0) {$f_\theta(Z_{r_i})$};
+        \node[logsig, rotate=90, minimum width=3.5cm] (logsig) at (12.6, 0) {$\logsig_{r_i, r_{i+1}}$};
+        \node[input, rotate=90, minimum width=2.8cm] (output) at (15.5, 0) {Output, $Z_{r_{i+1}}$};
+        
+        % Dimensions
+        \node[below, rotate=90] at (input.north east) [xshift=-2.4ex, yshift=0.4ex] {\footnotesize $v \times 1$};
+        \node[below, rotate=90] at (hidden1.north east) [xshift=-2.4ex, yshift=0.4ex] {\footnotesize $h \times 1$};
+        \node[below, rotate=90] at (hidden_end.north east) [xshift=-2.4ex, yshift=0.4ex] {\footnotesize $h \times 1$};
+        \node[below, rotate=0] at (hidden_square.north east) [xshift=-2.4ex, yshift=0.4ex] {\footnotesize $v \times p$};
+        \node[below, rotate=90] at (logsig.north east) [xshift=-2.4ex, yshift=0.4ex] {\footnotesize $p \times 1$};
+        \node[below, rotate=90] at (output.north east) [xshift=-2.4ex, yshift=0.4ex] {\footnotesize $v \times 1$};
+
+        % Dots
+        \node (dots) at (4, 0) {\ldots};
+        
+        % Add logsig arrow
+        \draw[middlearrow={>}] (12.6, -3) -- (logsig) node[midway, above, rotate=90] {Logsig} node[midway, below, rotate=90] {factor}; 
+        
+        % Arrows
+        \draw[middlearrow={>}] (input) -- (hidden1) node[midway, above] {ReLU};
+        \draw[middlearrow={>}] (hidden1) -- (dots) node[midway, above] {ReLU};
+        \draw[middlearrow={>}] (dots) -- (hidden_end) node[midway, above] {Tanh};
+        \draw[middlearrow={>}] (hidden_end) -- (hidden_square) node[midway, above] {Linear} node[midway, below] {+ reshape};
+        \draw[middlearrow={>}] (logsig) -- (output) node[midway, above] {ODE Solve};
+    
+        % Annotations
+        \draw[decoration={brace,raise=5pt},decorate] (8, 1.8) -- node[above=6pt] {Matrix multiplication} (13, 1.8);
+        \draw[decoration={brace,raise=5pt},decorate] (2, 2.5) -- node[above=6pt] {n layers} (6, 2.5);
+        \draw[decoration={brace,mirror,raise=5pt},decorate] (0.5, -2.5) -- node[below=6pt] {$f_\theta$} (8, -2.5);
+
+    \end{tikzpicture}
+}

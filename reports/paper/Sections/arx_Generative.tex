@@ -1,0 +1,14 @@
+% \section{A Generative Model with User Defined Control Signals}
+% In \cite{neural2018ode} the authors introduced a generative model for time-series data in continuous time utilising a Neural ODE to propagate the output of a variational auto-encoder (VAE) trained using an RNN as the recognition network. The data is uniquely determined given the output from the VAE as this is used as the initial state of the Neural ODE. 
+
+% Suppose now that we wish to generate time-series data that we know to be dependent upon a control path that we have `control' over. For example, suppose we wish to forecast different possible scenarios of confirmed COVID-19 cases for a given country over the next month. We know that this is strongly dependent on the response of government \cite{} which is something that can be \textit{controlled}, when generating this time-series data we would therefore like to generate likely scenarios conditional on different strategies imposed by the government to aid in analysing the scenarios that will keep confirmed cases lowest. 
+
+% As another example, consider a patient in an ICU on ventilation. There are numerous aspects of this ventilation that are doctor controlled, for example: ...\cite{}. With a Neural ODE model, we can attempt to forecast a patients vitals signs given past data, however the Neural CDE model gives a natural extension that enables us to forecast conditional on the changes made to a patients ventilation. This would be extremely valuable to understand the likely ventilation strategies that most often keep vitals signs in what is considered a `safe' range. Of course in reality this problem would likely be an extremely difficult one, however this is to illustrate the value of being able to generate data conditional on some time-series strategy. 
+
+% To write this down mathematically, suppose we have a time-series sampled at times $t_0,...t_N$ for which we have some `controllable-control' variables $\mathbf{x}^1_{t_i}$ and some `uncontrollable-control' variables (for example vital signs) $\mathbf{x}^2_{t_i}$. We use the Neural CDE equation (\ref{eq:neural_cde}) with path $\mathbf{x}_t = \langle \mathbf{x}^1_{t}, \mathbf{x}^2_{t} \rangle$ to encode this information onto a hidden state $\mathbf{h}_{t_N}$ that we push through a variational auto-encoder to generate an initial state $\mathbf{z}_{t_0}$. We now run a Neural CDE with initial state $\mathbf{z}_{t_0}$ to generate the latent states at each observation $(\mathbf{z}_{t_1}, ..., \mathbf{z}_{t_N})$:
+% \begin{align}
+%     \mathbf{z}_{t_0} &\sim p(\mathbf{z}_{t_0}) \\ 
+%     \mathbf{z}_{t_1}, ..., \mathbf{z}_{t_n} &= \text{CDESolve}(\mathbf{x}^1_t, \mathbf{z}_{t_0}, f_\theta) \\
+%     \text{each } \mathbf{x}^2_{t_i} &\sim p(\mathbf{x}^2_t | \mathbf{z}_{t_1}, \theta)
+% \end{align}
+% Given $\mathbf{x}^1_{t_i}$ is `controllable', we can extend this to future times $t_{N+1},...,t_M$ and run the CDE to make predictions here. 

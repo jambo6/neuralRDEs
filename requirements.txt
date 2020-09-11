@@ -1,0 +1,12 @@
+# matplotlib==3.2.1
+numpy==1.18.4
+pandas==1.0.3
+pytorch-ignite==0.3.0
+sacred==0.8.1
+scikit-learn==0.22.2.post1
+# seaborn==0.10.1
+# signatory==1.2.0.1.4.0
+sktime==0.3.1
+torch==1.4.0
+torchdiffeq==0.1.0
+tqdm==4.46.0

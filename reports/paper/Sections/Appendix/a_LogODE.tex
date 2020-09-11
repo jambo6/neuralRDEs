@@ -1,0 +1,176 @@
+\section{An introduction to the log-ODE method for controlled differential equations}\label{apx:logode}
+
+The log-ODE method is an effective method for approximating the controlled differential equation:
+\begin{align}
+dY_t & = f(Y_t)\,dX_t,
+\label{eq:cde_for_logode}\\[3pt]
+Y_0 & = \xi,\nonumber
+\end{align}
+where $X : [0,T]\rightarrow \R^d$ has finite length, $\xi\in\R^n$ and $f : \R^n \rightarrow L(\R^d, \R^n)$ is a function with certain smoothness assumptions so that the CDE (\ref{eq:cde_for_logode}) is well posed. Throughout these appendices, $L(U, V)$ denotes the space of linear maps between the vector spaces $U$ and $V$. In rough path theory, the function $f$ is referred to as the ``vector field'' of (\ref{eq:cde_for_logode}) and usually assumed to have $Lip(\gamma)$ regularity
+(see definition 10.2 in \cite{friz2010multidimensional}). In this section, we assume one of the below conditions on the vector field:
+\begin{enumerate}
+\item $f$ is bounded and has $N$ bounded derivatives.
+\item $f$ is linear.
+\end{enumerate}
+
+In order to define the log-ODE method, we will first consider the tensor algebra and path signature.\smallbreak
+
+\begin{definition}\label{def:tensoralgebras}
+We say that $T\big(\R^d\big):= \R \oplus \R^d \oplus (\R^d)^{\otimes 2}\oplus\cdots$ is the \textbf{tensor algebra} of $\R^d$ and $T\big(\big(\R^d\big)\big):=\big\{\boldsymbol{a} = \big(a_{0}, a_{1}, \cdots\big) : a_{k}\in\big(\R^d\big)^{\otimes k}\,\,\forall k\geq 0\big\}$ is the set of formal series of tensors of $\R^d$.
+Moreover, $T\big(\R^d\big)$ and $T\big(\big(\R^d\big)\big)$ can be endowed with the operations
+of addition and multiplication.
+Given $\boldsymbol{a} = (a_{0}, a_{1}, \cdots)$ and $\boldsymbol{b} = (b_{0}, b_{1}, \cdots)$, we have
+\begin{align}
+\boldsymbol{a} + \boldsymbol{b} & =\big(a_{0} + b_{0}, a_{1} + b_{1}, \cdots\big),\label{eq:tensoradd}\\
+\boldsymbol{a} \otimes \boldsymbol{b} & =\big(c_{0}, c_{1}, c_{2}, \cdots\big),\label{eq:tensormult}
+\end{align}
+where for $n\geq 0$, the $n$-th term $c_{n}\in\big(\R^d\big)^{\otimes n}$ can be written using the usual tensor product as
+\begin{equation}
+c_{n} := \sum_{k=0}^{n}a_{k}\otimes b_{n-k}.\nonumber
+\end{equation}
+The operation $\otimes$ given by (\ref{eq:tensormult}) is often referred to as the ``tensor product''.
+\end{definition}\medbreak
+
+\begin{definition}\label{def:signature_appendix}
+The \textbf{signature} of a finite length path $X : [0,T]\rightarrow\R^d$ over
+the interval $[s,t]$ is defined as the following collection of iterated (Riemann-Stieltjes) integrals:
+\begin{equation}\label{eq:fullsig}
+Sig_{s,t}\big(X\big) := \Big(1\hspace{0.5mm}, X_{s,t}^{(1)}, X_{s,t}^{(2)}, X_{s,t}^{(3)},\cdots\Big)\in T\big(\big(\R^d\big)\big),
+\end{equation}
+where for $n\geq 1$,
+\begin{equation}
+X_{s,t}^{(n)} := \idotsint\displaylimits_{s<u_{1}<\cdots<u_{n}<t}dX_{u_{1}}\otimes\cdots\otimes dX_{u_{n}}\in\big(\R^d\big)^{\otimes n}.\nonumber
+\end{equation}
+Similarly, we can define the $N$-step (or truncated) signature of the path $X$ on $[s,t]$ as
+\begin{equation}\label{eq:truncsig}
+Sig_{s,t}^{(N)}\big(X\big) := \Bigg(\hspace{0.5mm}1\hspace{0.5mm}, \int_{s<u_{1}<t}dX_{u}\,,\cdots, \idotsint\displaylimits_{s<u_{1}<\cdots<u_{N}<t}dX_{u_{1}}\otimes\cdots\otimes dX_{u_{N}}\Bigg)\in T^N\big(\R^d\big),
+\end{equation}
+where $T^N\big(\R^d\big):= \R \oplus \R^d \oplus (\R^d)^{\otimes 2}\oplus\cdots\oplus (\R^d)^{\otimes N}$ denotes the truncated tensor algebra.
+\end{definition}
+
+The (truncated) signature provides a natural feature set that describes the effects a path $X$ has on systems that can be modelled by (\ref{eq:cde_for_logode}). That said, defining the log-ODE method actually requires the so-called ``log-signature'' which efficiently encodes the same integral information as the signature. The log-signature is obtained from the path's signature by removing certain algebraic redundancies, such as
+\begin{equation}
+\int_0^t\int_0^s dX_u^{(i)} dX_s^{(j)} + \int_0^t\int_0^s dX_u^{(j)} dX_s^{(i)} = X_t^{(i)}X_t^{(j)},
+\nonumber
+\end{equation}
+for $i,j\in\{1,\cdots, d\}$, which follows using the integration by parts formula. To this end, we will define the logarithm map on the $N$-step truncated tensor algebra $T^N\big(\R^d\big):= \R \oplus \R^d\oplus\cdots\oplus (\R^d)^{\otimes N}$.
+
+\begin{definition}[The logarithm of a formal series]\label{def:tensor_log} For $\boldsymbol{a} = (a_{0}, a_{1}, \cdots) \in T\big(\big(\R^{d}\big)\big)$ with $a_{0} > 0$, define $\log(\boldsymbol{a})$ to be the element of $T\big(\big(\R^{d}\big)\big)$ given by the following series:
+\begin{align}
+\log(\boldsymbol{a})  & := \log(a_{0}) + \sum_{n=1}^{\infty}\frac{(-1)^{n}}{n}\bigg(\boldsymbol{1} - \frac{\boldsymbol{a}}{a_{0}}\bigg)^{\otimes n},\label{eq:fulltensorlogseries}
+\end{align}
+where $\boldsymbol{1} = (1, 0, \cdots)$ is the unit element of $T\big(\big(\R^{d}\big)\big)$ and $\log(a_{0})$ is viewed as $\log(a_{0})\boldsymbol{1}$.
+\end{definition}
+\begin{definition}[The logarithm of a truncated series] For $\boldsymbol{a} = (a_{0}, a_{1}, \cdots, a_N) \in T\big(\big(\R^{d}\big)\big)$ with $a_{0} > 0$, define $\log^N(\boldsymbol{a})$ to be the element of $T^N\big(\R^d\big)$ defined from the logarithm map (\ref{eq:fulltensorlogseries}) as
+\begin{align}
+\log^N(\boldsymbol{a})  & := P_N\big(\log(\boldsymbol{\widetilde{a}})\big),\label{eq:trunctensorlogseries}
+\end{align}
+where $\boldsymbol{\widetilde{a}} := (a_{0}, a_{1}, \cdots, a_N, 0, \cdots)\in T\big(\big(\R^{d}\big)\big)$ and $P_N$ denotes the standard projection map from $T\big(\big(\R^{d}\big)\big)$ onto $T^N\big(\R^d\big)$.
+\end{definition}
+
+\begin{definition}\label{def:logsig_appendix}The \textbf{log-signature} of a finite length path $X : [0,T]\rightarrow\R^d$ over the interval $[s,t]$ is $LogSig_{s,t}(X) := \log(Sig_{s,t}(X))$, where $Sig_{s,t}(X)$ denotes the path signature of $X$ given by Definition \ref{def:signature_appendix}.
+Likewise, the $N$-step (or truncated) log-signature of $X$ is defined for each $N\geq 1$ as $LogSig_{s,t}^N(X) := \log^N(Sig_{s,t}^N(X))$.
+\end{definition}
+
+The final ingredient we use to define the log-ODE method are the derivatives of the vector field $f$.
+It is worth noting that these derivatives also naturally appear in the Taylor expansion of (\ref{eq:cde_for_logode}).
+
+\begin{definition}[Vector field derivatives]\label{def:vect_derivative} We define $f^{\circ k} : \R^n\rightarrow L((\R^d)^{\otimes k}, \R^n)$ recursively by
+\begin{align*}
+f^{\circ (0)}(y) & := y,\\
+f^{\circ (1)}(y) & := f(y),\\
+f^{\circ (k + 1)}(y) & := D\big(f^{\circ k}\big)(y)f(y),
+\end{align*}
+for $y\in\R^n$, where $D\big(f^{\circ k}\big)$ denotes the Fr\'{e}chet derivative of $f^{\circ k}$.
+\end{definition}
+
+Using these definitions, we can describe two closely related numerical methods for the CDE (\ref{eq:cde_for_logode}).\smallbreak
+
+\begin{definition}[\textbf{The Taylor method}] Given the CDE (\ref{eq:cde_for_logode}), we can use the path signature of $X$ to approximate the solution $Y$ on an interval $[s,t]$ via its truncated Taylor expansion. That is, we use
+\begin{equation}
+\text{Taylor}(Y_s, f, Sig_{s,t}^N(X)) := \sum_{k=0}^N f^{\circ k}(Y_s)\pi_k \big(Sig_{s,t}^N(X)\big),
+\label{eq:taylor_def}
+\end{equation}
+as an approximation for $Y_t$ where each $\pi_k : T^N(\R^d)\rightarrow (\R^d)^{\otimes k}$ is the projection map onto $\big(\R^d\big)^{\otimes k}$.
+\end{definition}\medbreak
+
+\begin{definition}[\textbf{The Log-ODE method}]\label{def:logode} Using the Taylor method (\ref{eq:taylor_def}), we can define the function $\tilde{f} : \R^n \rightarrow L(T^N(\R^d), \R^n)$ by $\tilde{f}(z) := \text{Taylor}(z, f, \cdot\m)$. By applying $\tilde{f}$ to the truncated log-signature of the path $X$ over an interval $[s,t]$, we can define the following ODE on $[0,1]$
+\begin{align}
+\frac{dz}{du} & = \tilde{f}(z)LogSig_{s,t}^N(X),\label{eq:first_logode_def}\\[3pt]
+z(0) & = Y_s.\nonumber
+\end{align}
+Then the log-ODE approximation of $Y_t$ $($given $Y_s$ and $LogSig_{s,t}^N(X))$ is defined as
+\begin{equation}
+\text{LogODE}(Y_s, f, LogSig_{s,t}^N(X)) := z(1).
+\label{eq:second_logode_def}
+\end{equation}
+\end{definition}
+\begin{remark}
+Our assumptions of $f$ ensure that $z\mapsto\tilde{f}(z)LogSig_{s,t}^N(X)$ is either globally bounded and Lipschitz continuous or linear. Hence both the Taylor and log-ODE methods are well defined.
+\end{remark}
+\begin{remark}
+It is well known that the log-signature of a path $X$ lies in a certain free Lie algebra (this is detailed in Section 2.2.4 of \cite{roughpath2007notes}). Furthermore, it is also a theorem that the Lie bracket of two vector fields is itself a vector field which doesn't depend on choices of basis.
+By expressing $LogSig_{s,t}^N(X)$ using a basis of the free Lie algebra, it can be shown that only the vector field $f$ and its (iterated) Lie brackets are required to construct the log-ODE vector field $\tilde{f}(z)LogSig_{s,t}^N(X)$. One of the key advantages of this construction is that is can be extended to define the log-ODE method for CDEs on manifolds. Although this Lie theory is not directly utilized in our framework, we direct the reader to \cite{lyons2014streams} or \cite{logode2014estimate} for further details.
+\end{remark}
+
+\begin{figure}\label{diag:logode}
+\begin{center}
+\includegraphics[width=\textwidth]{"Images/logode diagram".pdf}
+\caption{Illustration of the log-ODE and Taylor methods for controlled differential equations.}
+\end{center}
+\end{figure}
+
+To illustrate the log-ODE method, we give two examples:
+\begin{example}[The ``increment-only'' log-ODE method]
+When $N = 1$, the ODE (\ref{eq:first_logode_def}) becomes
+\begin{align*}
+\frac{dz}{du} & = f(z)X_{s,t},\\[3pt]
+z(0) & = Y_s.
+\end{align*}
+Therefore we see that this ``increment-only'' log-ODE method is equivalent to driving the original CDE (\ref{eq:cde_for_logode}) by a piecewise linear approximation of the control path $X$. This is a classical approach
+for stochastic differential equations (i.e. when $X_t = (t, W_t)$ with $W$ denoting a Brownian motion) and is an example of a Wong-Zakai approximation (see \cite{wongzakai1965} for further details).
+\end{example}
+
+\begin{example}[An application for SDE simulation] Consider the following affine SDE,
+\begin{align}\label{eq:IGBM}
+dy_t & = a(b-y_t)\,dt + \sigma\m y_t\circ dW_t,\\[3pt]
+y(0) & = y_0\in\R_{\geq 0}\m,\nonumber
+\end{align}
+where $a,b\geq 0$ are the mean reversion parameters, $\sigma\geq 0$ is the volatility and $W$ denotes a standard real-valued Brownian motion. The $\circ$ means that this SDE is understood in the Stratonovich sense.
+The SDE (\ref{eq:IGBM}) is known in the literature as Inhomogeneous Geometric Brownian Motion (or IGBM).
+Using the control path $X = \{(t, W_t)\}_{t\geq 0}$ and setting $N = 3$, the log-ODE (\ref{eq:first_logode_def}) becomes
+\begin{align*}
+\frac{dz}{du} & = a(b-z_u)h + \sigma\m z_u W_{s,t} - ab\sigma A_{s,t} + ab\sigma^2 L_{s,t}^{(1)} + a^2b\sigma L_{s,t}^{(2)},\\[3pt]
+z(0) & = Y_s.
+\end{align*}
+where $h := t- s$ denotes the step size and the random variables $A_{s,t}, L_{s,t}^{(1)}, L_{s,t}^{(2)}$ are given by
+\begin{align*}
+A_{s,t} & := \int_s^t W_{s,r}\,dr - \frac{1}{2}hW_{s,t},\\[3pt]
+L_{s,t}^{(1)} & := \int_s^t\int_s^r W_{s,v}\,\circ dW_v\,dr - \frac{1}{2}W_{s,t}A_{s,t} - \frac{1}{6}hW_{s,t}^2,\\[3pt]
+L_{s,t}^{(2)} & := \int_s^t\int_s^r W_{s,v}\,dv\,dr - \frac{1}{2}h A_{s,t} - \frac{1}{6}h^2W_{s,t}.
+\end{align*}
+In \cite{foster2020poly}, the $3$-step log-signature of $X = \{(t, W_t)\}_{t\geq 0}$ was approximated so that the above log-ODE method became practical and this numerical scheme exhibited state-of-the-art convergence rates. For example, the approximation error produced by 25 steps of the
+high order log-ODE method was similar to the error of the ``increment only'' log-ODE method with 1000 steps.
+\end{example}
+
+\subsection{The generalized log-ODE method}
+
+The log-ODE method provides a natural map on path space. That is, we can view the ODE (\ref{eq:first_logode_def}) simply as a function of the path $X$. Ultimately, the vector field of this ODE will be parametrized,
+and this naturally leads us to consider alternatives to $\tilde{f}$ (such as linear functions or neural networks).
+To this end, we extend the log-ODE method given by Definition \ref{def:logode} to include general vector fields.
+
+\begin{definition}[The generalized log-ODE] Given a path $X:[0,T]\rightarrow\R^d$ with finite length, we consider the following ODE defined on the interval $[0,1]$,
+\begin{align}
+\frac{dz}{du} & = F(z)\m LogSig_{0,T}^N(X),\label{eq:general_logode_def}\\[3pt]
+z(0) & = z_0,\nonumber
+\end{align}
+where $N\geq 1$ and $F : \R^n \rightarrow L\big(T^N(\R^d), \R^n\big)$ satisfies the smoothness conditions so that (\ref{eq:general_logode_def}) is well posed. We define a generalized log-ODE method to be any function on path space that can be obtained by approximating the solution at $u = 1$ of an ODE with the form (\ref{eq:general_logode_def}).
+\end{definition}
+\begin{remark}
+As one would expect, we can take a partition $\triangle_K = \{0 = t_0 < t_1 <\cdots < t_K = T\}$ of $[0,T]$ and construct a discrete process $\{Y_t\}_{t\in\triangle_K}$ from $Y_0\in\R^n$ as $Y_{t_{k+1}} := z^k(1)$ for $k\geq 0$, where $z^k$ denotes the solution to the following generalized log-ODE:
+\begin{align*}
+\frac{dz^k}{du} & = F(z^k)\m LogSig_{t_k,t_{k+1}}^N(X),\\[3pt]
+z^k(0) & = Y_{t_k}.
+\end{align*}
+When the function $F$ comes from a parametrized family, we arrive at the proposed neural differential equation model.
+\end{remark}
