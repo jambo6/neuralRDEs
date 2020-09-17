@@ -1,4 +1,4 @@
-<h1 align='center'>Neural CDEs for Long Time-Series via the Log-ODE Method<br>
+<h1 align='center'>Neural CDEs for Long Time-Series<br> via the Log-ODE Method<br>
     [<a href="">arXiv</a>] </h1>
 <p align="center">
 </p>
@@ -12,7 +12,7 @@ Neural Controlled Differential Equations (Neural CDEs) are the continuous-time a
     <img class="center" src="./reports/diagram/ncde_diagram_from_paper.png" width="800"/>
 </p>
 
-Loosely speaking, this corresponds to binning the data prior to running a Neural CDE, with bin statistics carefully chosen to extract precisely the information most relevant to solving a CDE. We have traded in series length for additional input channels with this trade off coming at the cost of having two additional hyperparamters to tune. 
+Loosely speaking, this corresponds to binning the data prior to running a Neural CDE, with bin statistics carefully chosen to extract precisely the information most relevant to solving a CDE. We have traded in length for additional input channels, with this trade off coming at the cost of having two additional hyperparameters to tune. 
 
 -----
 
