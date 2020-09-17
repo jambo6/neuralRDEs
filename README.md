@@ -1,12 +1,8 @@
 <h1 align='center'>Neural CDEs for Long Time-Series<br> via the Log-ODE Method<br>
     [<a href="">arXiv</a>] </h1>
-<p align="center">
-</p>
-
------
 
 ## Overview
-Neural Controlled Differential Equations (Neural CDEs) are the continuous-time analogue of an RNN. However, as with RNNs, training can quickly become impractical for long time series. Here we show that a pre-existing mathematical tool - the log-ODE method - can allow us to take integration steps larger than the discretisation of the data, resulting in significantly faster training times, with retainment (and often even improvements) in model performance. 
+Neural Controlled Differential Equations ([Neural CDEs](https://github.com/patrick-kidger/NeuralCDE)) are the continuous-time analogue of an RNN. However, as with RNNs, training can quickly become impractical for long time series. Here we show that a pre-existing mathematical tool - the log-ODE method - can allow us to take integration steps larger than the discretisation of the data, resulting in significantly faster training times, with retainment (and often even improvements) in model performance. 
 
 <p align="center">
     <img class="center" src="./reports/diagram/ncde_diagram_from_paper.png" width="800"/>
@@ -16,9 +12,14 @@ Loosely speaking, this corresponds to binning the data prior to running a Neural
 
 -----
 
-## The Code
+## Paper
+This repository contains all the code for reproducing the experiments from the <a href="">Neural CDEs for Long Time-Series via the Log-ODE Method</a> paper.
 
-This repository contains all the code for reproducing the experiments from the <a href="">Neural CDEs for Long Time-Series via the Log-ODE Method</a> paper. Code for constructing the logsignature NCDEs is in the `ncdes/` folder and can be adapted to run your own models. However, we recommended you check out the <a href="https://github.com/patrick-kidger/torchcde">torchcde</a> project which is a well maintained library for doing all things NCDE related which includes a log-ODE method implementation. 
+## Code
+Code for constructing the logsignature NCDEs is in the `ncdes/` folder and can be adapted to run your own models.
+
+## Library
+We recommended checking out the <a href="https://github.com/patrick-kidger/torchcde">torchcde</a> project, which is a well maintained library for doing all things NCDE related, and now includes a log-ODE implementation. 
 
 
 -----
