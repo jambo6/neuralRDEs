@@ -1,23 +1,25 @@
-<h1 align='center'>Neural CDEs for Long Time-Series via the Log-ODE Method<br>
-    [<a href="">arXiv</a>] </h1>
-<p align="center">
-</p>
-
------
+<h1 align='center'>Neural CDEs for Long Time-Series<br> via the Log-ODE Method<br>
+    [<a href="https://arxiv.org/abs/2009.08295">arXiv</a>] </h1>
 
 ## Overview
-Neural Controlled Differential Equations (Neural CDEs) are the continuous-time analogue of an RNN. However, as with RNNs, training can quickly become impractical for long time series. Here we show that a pre-existing mathematical tool - the log-ODE method - can allow us to take integration steps larger than the discretisation of the data, resulting in significantly faster training times, with retainment (and often even improvements) in model performance. 
+Neural Controlled Differential Equations ([Neural CDEs](https://github.com/patrick-kidger/NeuralCDE)) are the continuous-time analogue of an RNN. However, as with RNNs, training can quickly become impractical for long time series. Here we show that a pre-existing mathematical tool - the log-ODE method - can allow us to take integration steps larger than the discretisation of the data, resulting in significantly faster training times, with retainment (and often even improvements) in model performance. 
 
 <p align="center">
-    <img class="center" src="./reports/diagram/ncde_diagram_from_paper.png" width="850"/>
+    <img class="center" src="./reports/diagram/ncde_diagram_from_paper.png" width="800"/>
 </p>
+
+Loosely speaking, this corresponds to binning the data prior to running a Neural CDE, with bin statistics carefully chosen to extract precisely the information most relevant to solving a CDE. We have traded in length for additional input channels, with this trade off coming at the cost of having two additional hyperparameters to tune. 
 
 -----
 
-## The Code
+## Paper
+This repository contains all the code for reproducing the experiments from the <a href="https://arxiv.org/abs/2009.08295">Neural CDEs for Long Time-Series via the Log-ODE Method</a> paper.
 
-This repository contains all the code for reproducing the experiments from the <a href="">Neural CDEs for Long Time-Series via the Log-ODE Method</a> paper. Code for constructing the logsignature NCDEs is in the `ncdes/` folder and can be adapted to run your own models. However, we recommended you check out the <a href="https://github.com/patrick-kidger/torchcde">torchcde</a> project which is a well maintained library for doing all things NCDE related which includes a log-ODE method implementation. 
+## Code
+Code for constructing the logsignature NCDEs is in the `ncdes/` folder and can be adapted to run your own models.
 
+## Library
+We recommended checking out the <a href="https://github.com/patrick-kidger/torchcde">torchcde</a> project, which is a well maintained library for doing all things NCDE related, and now includes a log-ODE implementation. 
 
 -----
 
@@ -27,7 +29,7 @@ This repository contains all the code for reproducing the experiments from the <
 First to setup the environment, install the requirements with
 
 + `pip install -r requirements.txt`
-+ `pip signatory==1.2.0.1.4.0`
++ `pip install signatory==1.2.0.1.4.0 --no-cache-dir --force-reinstall`
 
 (Signatory has to be installed after PyTorch, due to limitations with pip).
 
@@ -80,6 +82,11 @@ this will print an overview of the results to the console.
 ## Citation
 
 ```bibtex
-@article{}
+@article{morrill2020logode,
+    author={Morrill, James and Kidger, Patrick and Salvi, Cristopher and Foster, James and Lyons, Terry},
+    title={{Neural CDEs for Long Time-Series via the Log-ODE Method}},
+    year={2020},
+    journal={arXiv:2009.08295}
+}
 ```
 
