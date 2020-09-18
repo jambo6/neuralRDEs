@@ -29,7 +29,7 @@ We recommended checking out the <a href="https://github.com/patrick-kidger/torch
 First to setup the environment, install the requirements with
 
 + `pip install -r requirements.txt`
-+ `pip install signatory==1.2.0.1.4.1 --no-cache-dir --force-reinstall`
++ `pip install signatory==1.2.0.1.4.0 --no-cache-dir --force-reinstall`
 
 (Signatory has to be installed after PyTorch, due to limitations with pip).
 
