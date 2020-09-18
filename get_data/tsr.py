@@ -13,8 +13,8 @@ import torch
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from get_data.uea import download
-from get_data.helpers import save_pickle
+from uea import download
+from helpers import save_pickle
 
 RAW_DIR = '../data/raw/TSR'
 PROCESSED_DIR = '../data/processed/TSR'
