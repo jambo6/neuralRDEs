@@ -82,7 +82,7 @@ this will print an overview of the results to the console.
 ## Citation
 
 ```bibtex
-@article{kidger2020neuralcde,
+@article{morrill2020logode,
     author={Morrill, James and Kidger, Patrick and Salvi, Cristopher and Foster, James and Lyons, Terry},
     title={{Neural CDEs for Long Time-Series via the Log-ODE Method}},
     year={2020},
