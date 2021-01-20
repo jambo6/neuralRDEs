@@ -153,7 +153,6 @@ def get_hyperparams(ex,
     return hyperparams
 
 
-
 if __name__ == '__main__':
     save_dir = '../models/test/UEA/BasicMotions'
     partition = create_run_frame(save_dir + '/partition')

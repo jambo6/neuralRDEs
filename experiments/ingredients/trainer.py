@@ -17,7 +17,7 @@ from ignite.engine import create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss, RunningAverage
 from ignite.handlers import ModelCheckpoint, EarlyStopping
 from ignite.contrib.metrics.roc_auc import ROC_AUC
-from nets.losses import RMSELoss, PvarLossWrapper
+from experiments.nets.losses import RMSELoss
 
 train_ingredient = Ingredient('train')
 

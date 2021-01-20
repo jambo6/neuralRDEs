@@ -33,11 +33,11 @@ def get_model(model_type,
                 num_layers=num_layers, return_sequences=return_sequences, adjoint=adjoint, solver=solver
             )
         elif model_type == 'logsig-rnn':
-            model = RNN(input_dim, hidden_dim, output_dim, return_sequences=return_sequences)
+            model = RNN(input_dim, hidden_dim, output_dim, num_layers=num_layers, return_sequences=return_sequences)
         elif model_type == 'rnn':
-            model = RNN(input_dim, hidden_dim, output_dim, return_sequences=return_sequences)
+            model = RNN(input_dim, hidden_dim, output_dim, num_layers=num_layers, return_sequences=return_sequences)
         elif model_type in ['gru', 'gru-dt']:
-            model = GRU(input_dim, hidden_dim, output_dim, return_sequences=return_sequences)
+            model = GRU(input_dim, hidden_dim, output_dim, num_layers=num_layers, return_sequences=return_sequences)
         elif model_type == 'grud':
             model = GRUD(input_dim, hidden_dim, output_dim, return_sequences=return_sequences)
         elif model_type == 'odernn':
@@ -60,6 +60,7 @@ def get_model(model_type,
         model = tune_total_params(builder, tune_params)
     elif not tune_set and all_params_set:
         model = model_getter(hidden_dim, hidden_hidden_multiplier * hidden_dim)
+        get_num_params(model)
     else:
         raise ValueError("`tune_params` or all of [hidden_dim, hidden_hidden_multiplier, num_layers] must be set.")
 
@@ -67,6 +68,15 @@ def get_model(model_type,
     n_params = get_num_params(model)
     print(model, '\n', 'Num model parameters: {}'.format(n_params))
 
+    # for i in [1, 2, 4, 8, 16]:
+    #     hidden_hidden_dim = hidden_dim * hidden_hidden_multiplier
+    #     gg = input_dim * i
+    #     model = NeuralRDE(
+    #         initial_dim, gg, hidden_dim, output_dim, hidden_hidden_dim=hidden_hidden_dim,
+    #         num_layers=num_layers, return_sequences=return_sequences, adjoint=adjoint, solver=solver
+    #     )
+    #     k = get_num_params(model)
+    #     print('Input_dim x {} - n_params={}'.format(i, k))
     return model, n_params
 
 

@@ -147,7 +147,6 @@ class FilterLinear(nn.Module):
                + ', bias=' + str(self.bias is not None) + ')'
 
 
-
 def evaluate_time_since_last_observation(controls):
     """Given data of shape [N, L, C] with nan values, computes the time since last observation at each point.
 

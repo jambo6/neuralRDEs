@@ -129,19 +129,22 @@ class ODE_RNN(nn.Module):
         # Linear classifier to apply to final layer
         self.final_linear = nn.Linear(self.hidden_dim, self.output_dim) if self.apply_final_linear else lambda x: x
 
-    def forward(self, times, inputs):
+    def forward(self, inputs, times=None):
         # Params
         batch_size, length = inputs.size()[:2]
 
+        if times == None:
+            times = torch.arange(0, length).to(inputs.device)
+
         # For storing all hidden states
-        h_i = torch.zeros(batch_size, self.hidden_dim)
+        h_i = torch.zeros(batch_size, self.hidden_dim).to(inputs.device)
         hidden_states = []
 
         # Get the odeint function
         ode_func = odeint_adjoint if self.adjoint else odeint
 
         # Loop over time to get the final hidden state
-        dts = [torch.Tensor([0, t]) for t in times[1:] - times[:-1]]
+        dts = [torch.Tensor([0, t]).to(inputs.device) for t in times[1:] - times[:-1]]
         for i in range(length):
             # Solve ODE then update with data
             h_i = ode_func(func=self.ode_cell, y0=h_i, t=dts[i-1], method=self.solver)[-1]

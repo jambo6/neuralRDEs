@@ -24,15 +24,15 @@ class RNN(nn.Module):
                           bias=bias,
                           dropout=dropout,
                           batch_first=True)
-        self.total_hidden_size = num_layers * hidden_dim
-        self.final_linear = nn.Linear(self.total_hidden_size, output_dim) if self.apply_final_linear else lambda x: x
+        self.final_linear = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, x):
         # Run the RNN
-        h_full, _ = self.rnn(x)
+        h_full, h_final = self.rnn(x)
 
         # Terminal output if classifcation else return all outputs
-        outputs = self.final_linear(h_full[:, -1, :]) if not self.return_sequences else self.final_linear(h_full)
+        h_final_in = h_final[:, -1, :] if h_final.dim() == 2 else h_final[-1]
+        outputs = self.final_linear(h_final_in) if not self.return_sequences else self.final_linear(h_full)
 
         return outputs
 
@@ -57,15 +57,15 @@ class GRU(nn.Module):
                           bias=bias,
                           dropout=dropout,
                           batch_first=True)
-        self.total_hidden_size = num_layers * hidden_dim
-        self.final_linear = nn.Linear(self.total_hidden_size, output_dim)
+        self.final_linear = nn.Linear(hidden_dim, output_dim)
 
     def forward(self, x):
         # Run the RNN
         h_full, h_final = self.gru(x)
 
         # Terminal output if classification else return all outputs
-        outputs = self.final_linear(h_final.squeeze(0)) if not self.return_sequences else self.linear(h_full)
+        h_final_in = h_final[:, -1, :] if h_final.dim() == 2 else h_final[-1]
+        outputs = self.final_linear(h_final_in) if not self.return_sequences else self.final_linear(h_full)
 
         return outputs
 

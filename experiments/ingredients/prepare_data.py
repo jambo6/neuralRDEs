@@ -58,6 +58,20 @@ def ready_all_data_and_model(_run,
     # Get the raw data
     train_data, val_data, test_data, output_dim, return_sequences = process_data(model_type=model_type)
 
+    if 'folded' in model_type:
+        def perform_fold(controls):
+            L = controls.size(1)
+            zeros = torch.zeros(controls.size(0), step - L % step, controls.size(2))
+            new_controls = torch.cat([controls, zeros], 1)
+            folded = new_controls.reshape(new_controls.size(0), int(new_controls.size(1) / step), -1)
+            return folded
+        train_data[0] = perform_fold(train_data[0])
+        val_data[0] = perform_fold(val_data[0])
+        test_data[0] = perform_fold(test_data[0])
+        step = 1
+        model_type = model_type.split('_')[0]
+        assert model_type in ['nrde', 'rnn', 'gru', 'odernn']
+
     # Setup as datasets
     train_ds, train_sampler = build_dataset(model_type=model_type, data=train_data, depth=depth, step=step)
     val_ds, val_sampler = build_dataset(model_type=model_type, data=val_data, depth=depth, step=step)
@@ -141,7 +155,8 @@ def process_data(ds_folder, ds_name, missing_rate, include_observational_intensi
     # Reshape the GRU-variant data
     train_data, val_data, test_data = ensure_3d(train_data, val_data, test_data)
 
-    return train_data, test_data, val_data, output_dim, return_sequences
+    # return train_data, test_data, val_data, output_dim, return_sequences
+    return train_data, val_data, test_data, output_dim, return_sequences
 
 
 @data_ingredient.capture
@@ -233,9 +248,12 @@ def scale_data(scaling, train_data, val_data, test_data, controls_idx=0):
     scaler = TrickScaler(scaling=scaling)
     slice_ = 0 if train_data[controls_idx].dim() == 4 else slice(None)
     # Scaling
-    train_data[controls_idx][:, slice_] = scaler.fit_transform(train_data[controls_idx][:, slice_])
-    val_data[controls_idx][:, slice_] = scaler.transform(val_data[controls_idx][:, slice_])
-    test_data[controls_idx][:, slice_] = scaler.transform(test_data[controls_idx][:, slice_])
+    train_data[controls_idx][:, :, 1:] = scaler.fit_transform(train_data[controls_idx][:, :, 1:])
+    val_data[controls_idx][:, :, 1:] = scaler.transform(val_data[controls_idx][:, :, 1:])
+    test_data[controls_idx][:, :, 1:] = scaler.transform(test_data[controls_idx][:, :, 1:])
+    # train_data[controls_idx][:, slice_] = scaler.fit_transform(train_data[controls_idx][:, slice_])
+    # val_data[controls_idx][:, slice_] = scaler.transform(val_data[controls_idx][:, slice_])
+    # test_data[controls_idx][:, slice_] = scaler.transform(test_data[controls_idx][:, slice_])
     return train_data, val_data, test_data
 
 
