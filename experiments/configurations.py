@@ -32,15 +32,6 @@ default = {
         'num_layers': [1],
         'seed': [0],
     },
-    'hyperopt-rnn': {
-        'model_type': ['rnn_folded'],
-        'depth': [1],
-        'step': [8],
-        'hidden_dim': [8, 16, 32, 64, 128, 164],
-        'hidden_hidden_multiplier': [3],
-        'num_layers': [1, 2, 3, 4],
-        'seed': [0],
-    },
     'main': {
         # Data
         'data__batch_size': [128],
@@ -48,6 +39,16 @@ default = {
         'model_type': ['nrde'],
         'depth': [1, 2, 3],
         'step': [1, 2, 3, 5, 10, 20, 50],
+        'hyperopt_metric': ['acc'],
+        'seed': [111, 222, 333],
+    },
+    'main-odernn': {
+        # Data
+        'data__batch_size': [128],
+        # Main
+        'model_type': ['odernn_folded'],
+        'depth': [1],
+        'step': [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048],
         'hyperopt_metric': ['acc'],
         'seed': [111, 222, 333],
     },
@@ -59,22 +60,16 @@ default = {
         'step': [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048],
         'seed': [111, 222, 333],
     },
-}
-
-new_runs = {
-    'UEA': {
-        'EigenWorms': {
-            'model_type': ['nrde_folded'],
-            'data__batch_size': [1024],
-            'data__adjoint': [True],
-            'hidden_dim': [32],
-            'num_layers': [3],
-            'step': [8, 16, 32, 64][::-1],
-            'hidden_hidden_multiplier': [2],
-            'seed': [111, 222, 333],
-        },
+    'bidmcmain-odernn': {
+        'model_type': ['odernn_folded'],
+        'data__batch_size': [512],
+        'hyperopt_metric': ['loss'],
+        'depth': [1],
+        'step': [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048],
+        'seed': [111, 222, 333],
     },
 }
+
 
 configs = {
     # UEA
@@ -88,6 +83,10 @@ configs = {
                 'data__batch_size': [1024],
                 'step': [36]    # Total steps [500]
             },
+            'hyperopt-odernn': {
+                **default['hyperopt-odernn'],
+                'data__batch_size': [512],
+            },
             'main': {
                 **default['main'],
                 'data__batch_size': [1024],
@@ -96,9 +95,14 @@ configs = {
                 'depth': [1, 2, 3],
                 'step': [1, 2, 4, 6, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
             },
-            'hyperopt-odernn': {
-                **default['hyperopt-odernn'],
-                'data__batch_size': [512],
+            'main-odernn': {
+                **default['main'],
+                'model_type': ['odernn_folded'],
+                'data__batch_size': [1024],
+                'data__adjoint': [True],
+                'hyperopt_metric': ['acc'],
+                'depth': [1],
+                'step': [1, 2, 4, 6, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
             },
         },
     },
@@ -111,10 +115,6 @@ configs = {
                 'data__batch_size': [512],
                 'step': [8],
             },
-            'hyperopt-rnn': {
-                **default['hyperopt-rnn'],
-                'data__batch_size': [512],
-            },
             'hyperopt-odernn': {
                 **default['hyperopt-odernn'],
                 'data__batch_size': [512],
@@ -122,6 +122,10 @@ configs = {
             'main': {
                 **default['bidmcmain'],
                 'data__adjoint': [True]
+            },
+            'main-odernn': {
+                **default['bidmcmain-odernn'],
+                'data__adjoint': [True],
             },
         },
 
@@ -151,10 +155,6 @@ configs = {
                 **default['hyperopt'],
                 'data__batch_size': [512],
             },
-            'hyperopt-rnn': {
-                **default['hyperopt-rnn'],
-                'data__batch_size': [512],
-            },
             'hyperopt-odernn': {
                 **default['hyperopt-odernn'],
                 'data__batch_size': [512],
@@ -162,6 +162,10 @@ configs = {
             'main': {
                 **default['bidmcmain'],
                 'data__adjoint': [True]
+            },
+            'main-odernn': {
+                **default['bidmcmain-odernn'],
+                'data__adjoint': [True],
             },
         },
 
@@ -174,10 +178,6 @@ configs = {
                 'data__batch_size': [512],
                 'step': [8],
             },
-            'hyperopt-rnn': {
-                **default['hyperopt-rnn'],
-                'data__batch_size': [512],
-            },
             'hyperopt-odernn': {
                 **default['hyperopt-odernn'],
                 'data__batch_size': [512],
@@ -185,6 +185,10 @@ configs = {
             'main': {
                 **default['bidmcmain'],
                 'data__adjoint': [True]
+            },
+            'main-odernn': {
+                **default['bidmcmain-odernn'],
+                'data__adjoint': [True],
             },
             'main_params': {
                 **default['test'],

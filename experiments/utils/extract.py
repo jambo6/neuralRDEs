@@ -120,6 +120,7 @@ def get_hyperparams(ex,
     """
     # Setup
     save_dir = str(Path(ex.observers[0].basedir).parent / 'hyperopt')
+    save_dir = save_dir + '-odernn' if model_type == 'odernn_folded' else save_dir
     assert os.path.exists(save_dir), "Cannot find hyper-parameter run at {}.".format(save_dir)
 
     # Load the results

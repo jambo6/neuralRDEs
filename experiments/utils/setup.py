@@ -135,7 +135,7 @@ def basic_gridsearch(ex,
             if 'hyperopt_metric' in params:
                 metric = params['hyperopt_metric']
                 assert isinstance(metric, str), "Hyperopt metric must be a string."
-                hyperparams = get_hyperparams(ex, 'nrde', metric=metric)
+                hyperparams = get_hyperparams(ex, params['model_type'], metric=metric)
                 params.update(hyperparams)
 
             # Run and mark completed if successful
