@@ -1,4 +1,4 @@
-<h1 align='center'>Neural Rough Differential Equations<br> for Long Time Series<br>
+<h1 align='center'>Neural Rough Differential Equations for Long Time Series <br> (ICML 2021)<br>
     [<a href="https://arxiv.org/abs/2009.08295">arXiv</a>] </h1>
 
 ## Overview
