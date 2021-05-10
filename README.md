@@ -5,7 +5,7 @@
 Neural Controlled Differential Equations ([Neural CDEs](https://github.com/patrick-kidger/NeuralCDE)) are the continuous-time analogue of an RNN. However, as with RNNs, training can quickly become impractical for long time series. Here we use rough path theory to extend this formulation through application of a pre-existing mathematical tool from rough analysis - the log-ODE method - which allows us to take integration steps larger than the discretisation of the data, resulting in significantly faster training times, with retainment (and often even improvements) in model performance. 
 
 <p align="center">
-    <img class="center" src="./reports/diagram/ncde_diagram.png" width="800"/>
+    <img class="center" src="./assets/ncde_diagram.png" width="800"/>
 </p>
 
 Loosely speaking, this corresponds to binning the data prior to running a Neural CDE, with bin statistics carefully chosen to extract precisely the information most relevant to solving a CDE. We have traded in length for additional input channels, with this trade off coming at the cost of having two additional hyperparameters to tune. 

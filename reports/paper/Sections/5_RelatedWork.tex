@@ -1,9 +1,0 @@
-\section{Related Work}
-There has been some work on long time series for classic RNN (GRU/LSTM) models. \citet{campos2017skip} introduce the `Skip-RNN' model, which extend the RNN by adding an additional learnt component that skips state updates. This reduces the number of computations in the forward pass. However, this model is now not dependent on the within-skip input data. Furthermore, one does not know a priori how many states the model will choose to skip, which can lead to memory difficulties. 
-
-Another approach is hierarchical subsampling as in \citet{graves2012supervised, de2015survey}, which operates over multiple training examples at a time as an input, thus reducing the number of total forward computations. Whilst this method is dependent on all the data, it naively uses the raw data when an appropriate summarisation would be more sensible.
-
-This is rectified in \cite{liao2019learning} where the authors in fact use the logsignature as their summarisation procedure.
-
-
-However, as is common with all of these models, it describes some some modification of the RNN structure but it has been shown in \cite{kidger2020neural} that the NCDE model subsumes the class of RNN/LSTM/GRU, in that it can model a wider class of functions. Additionally, none of these approaches be solved using ODE methods and thus are not able to utilise the adjoint method, continuous time dynamics, and so on.   
