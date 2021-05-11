@@ -82,11 +82,11 @@ this will print an overview of the results to the console.
 ## Citation
 
 ```bibtex
-@article{morrill2020neural,
+@article{morrill2021neuralrough,
   title={Neural Rough Differential Equations for Long Time Series},
   author={Morrill, James and Salvi, Cristopher and Kidger, Patrick and Foster, James and Lyons, Terry},
-  journal={arXiv preprint arXiv:2009.08295},
-  year={2020}
+  journal={International Conference on Machine Learning},
+  year={2021}
 }
 ```
 
